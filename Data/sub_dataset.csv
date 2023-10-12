@@ -1,0 +1,1031 @@
+function,smellKey,smellKey_encoded
+"public boolean kBaseInternal_tryWriteLock(){
+    return this.lock.writeLock().tryLock();
+}",java:S100,0.0
+"public char getDefaultValueAs_char(){
+    if (StringUtils.isEmpty(initExpr)) {
+        return '\u0000';
+    } else {
+        if (initExpr.length() == 1) {
+            return initExpr.charAt(0);
+        } else {
+            return CoreComponentsBuilder.get().getMVELExecutor().eval(initExpr, Character.class);
+        }
+    }
+}",java:S100,0.0
+"private Exception UndefinedForwardRequestHandlerException(){
+    return new Exception(""No forward request defines for"" + this.getClass());
+}",java:S100,0.0
+"private HandshakeResult handshake_2_1_0() throws IOException, SQLException{
+    BinaryWriterExImpl writer = new BinaryWriterExImpl(null, new BinaryHeapOutputStream(HANDSHAKE_MSG_SIZE), null, null);
+    writer.writeByte((byte) ClientListenerRequest.HANDSHAKE);
+    writer.writeShort(VER_2_1_0.major());
+    writer.writeShort(VER_2_1_0.minor());
+    writer.writeShort(VER_2_1_0.maintenance());
+    writer.writeByte(ClientListenerNioListener.JDBC_CLIENT);
+    writer.writeBoolean(connProps.isDistributedJoins());
+    writer.writeBoolean(connProps.isEnforceJoinOrder());
+    writer.writeBoolean(connProps.isCollocated());
+    writer.writeBoolean(connProps.isReplicatedOnly());
+    writer.writeBoolean(connProps.isAutoCloseServerCursor());
+    send(writer.array());
+    BinaryReaderExImpl reader = new BinaryReaderExImpl(null, new BinaryHeapInputStream(read()), null, null, false);
+    boolean accepted = reader.readBoolean();
+    if (accepted) {
+        HandshakeResult handshakeRes = new HandshakeResult();
+        handshakeRes.igniteVersion(new IgniteProductVersion((byte) 2, (byte) 1, (byte) 0, ""Unknown"", 0L, null));
+        handshakeRes.serverProtocolVersion(VER_2_1_0);
+        return handshakeRes;
+    } else {
+        short maj = reader.readShort();
+        short min = reader.readShort();
+        short maintenance = reader.readShort();
+        String err = reader.readString();
+        ClientListenerProtocolVersion ver = ClientListenerProtocolVersion.create(maj, min, maintenance);
+        throw new SQLException(""Handshake failed [driverProtocolVer="" + CURRENT_VER + "", remoteNodeProtocolVer="" + ver + "", err="" + err + ']', SqlStateCode.CONNECTION_REJECTED);
+    }
+}",java:S100,0.0
+"public float getDefaultValueAs_float(){
+    try {
+        return initExpr == null ? 0.0f : Float.parseFloat(initExpr);
+    } catch (NumberFormatException nfe) {
+        return StringUtils.isEmpty(initExpr) ? 0.0f : CoreComponentsBuilder.get().getMVELExecutor().eval(initExpr, Float.class);
+    }
+}",java:S100,0.0
+"private static byte[] decode_base64(String s, int maxolen) throws IllegalArgumentException{
+    StringBuffer rs = new StringBuffer();
+    int off = 0, slen = s.length(), olen = 0;
+    byte[] ret;
+    byte c1, c2, c3, c4, o;
+    if (maxolen <= 0)
+        throw new IllegalArgumentException(""Invalid maxolen"");
+    while (off < slen - 1 && olen < maxolen) {
+        c1 = char64(s.charAt(off++));
+        c2 = char64(s.charAt(off++));
+        if (c1 == -1 || c2 == -1)
+            break;
+        o = (byte) (c1 << 2);
+        o |= (c2 & 0x30) >> 4;
+        rs.append((char) o);
+        if (++olen >= maxolen || off >= slen)
+            break;
+        c3 = char64(s.charAt(off++));
+        if (c3 == -1)
+            break;
+        o = (byte) ((c2 & 0x0f) << 4);
+        o |= (c3 & 0x3c) >> 2;
+        rs.append((char) o);
+        if (++olen >= maxolen || off >= slen)
+            break;
+        c4 = char64(s.charAt(off++));
+        o = (byte) ((c3 & 0x03) << 6);
+        o |= c4;
+        rs.append((char) o);
+        ++olen;
+    }
+    ret = new byte[olen];
+    for (off = 0; off < olen; off++) ret[off] = (byte) rs.charAt(off);
+    return ret;
+}",java:S100,0.0
+"public ReentrantReadWriteLock kBaseInternal_getLock(){
+    return lock;
+}",java:S100,0.0
+"private Exception UndefinedForwardRequestHandlerException(){
+    return new Exception(""No forward request defines for"" + this.getClass());
+}",java:S100,0.0
+"private void explain_(RelNode rel, List<Pair<String, Object>> values){
+    final Map<String, Object> map = relJson.map();
+    map.put(""id"", null);
+    map.put(""relOp"", relJson.classToTypeName(rel.getClass()));
+    for (Pair<String, Object> value : values) {
+        if (value.right instanceof RelNode)
+            continue;
+        map.put(value.left, relJson.toJson(value.right));
+    }
+    final List<Object> list = explainInputs(rel.getInputs());
+    if (list.size() != 1 || !list.get(0).equals(previousId)) {
+        map.put(""inputs"", list);
+    }
+    final String id = Integer.toString(relIdMap.size());
+    relIdMap.put(rel, id);
+    map.put(""id"", id);
+    relList.add(map);
+    previousId = id;
+}",java:S100,0.0
+"public static Junction make_3_junction(int basepoint, int p1, int p2, int p3){
+    int shaft, barb1, barb2;
+    double angle12, angle13, angle23;
+    double sum, sum1213, sum1223, sum1323;
+    double delta;
+    String j_type;
+    angle12 = inscribed_angle(basepoint, p1, p2);
+    angle13 = inscribed_angle(basepoint, p1, p3);
+    angle23 = inscribed_angle(basepoint, p2, p3);
+    sum1213 = angle12 + angle13;
+    sum1223 = angle12 + angle23;
+    sum1323 = angle13 + angle23;
+    if (sum1213 < sum1223) {
+        if (sum1213 < sum1323) {
+            sum = sum1213;
+            shaft = p1;
+            barb1 = p2;
+            barb2 = p3;
+        } else {
+            sum = sum1323;
+            shaft = p3;
+            barb1 = p1;
+            barb2 = p2;
+        }
+    } else {
+        if (sum1223 < sum1323) {
+            sum = sum1223;
+            shaft = p2;
+            barb1 = p1;
+            barb2 = p3;
+        } else {
+            sum = sum1323;
+            shaft = p3;
+            barb1 = p1;
+            barb2 = p2;
+        }
+    }
+    delta = sum - PI;
+    if (delta < 0.0)
+        delta = -delta;
+    if (delta < 0.001) {
+        j_type = Junction.TEE;
+    } else if (sum > PI) {
+        j_type = Junction.FORK;
+    } else {
+        j_type = Junction.ARROW;
+    }
+    return new Junction(barb1, shaft, barb2, basepoint, j_type);
+}",java:S100,0.0
+"private void addMatch(final AccumulateNode accNode, final Accumulate accumulate, final LeftTuple leftTuple, final RightTuple rightTuple, final LeftTuple currentLeftChild, final LeftTuple currentRightChild, final ReteEvaluator reteEvaluator, final AccumulateMemory am, final BaseAccumulation accctx, final boolean useLeftMemory, final boolean leftPropagation){
+    LeftTuple tuple = leftTuple;
+    InternalFactHandle handle = (InternalFactHandle) rightTuple.getFactHandle();
+    if (accNode.isRightInputIsRiaNode()) {
+        tuple = (LeftTuple) rightTuple;
+        handle = rightTuple.getFactHandleForEvaluation();
+    }
+    if (leftPropagation && handle.isExpired()) {
+        return;
+    }
+    accctx.setPropagationContext(rightTuple.getPropagationContext());
+    Object value = accumulate.accumulate(am.workingMemoryContext, accctx, tuple, handle, reteEvaluator);
+    if (useLeftMemory) {
+        LeftTuple match = accNode.createLeftTuple(leftTuple, rightTuple, currentLeftChild, currentRightChild, accNode, true);
+        postAccumulate(accNode, accctx, match);
+        match.setContextObject(value);
+    }
+}",java:S107,1.0
+"public VariableResolverFactory getFactory(final Object knowledgeHelper, final Declaration[] prevDecl, final Rule rule, final FactHandle rightHandle, final BaseTuple tuple, final Object[] otherVars, final ValueResolver valueResolver, final GlobalResolver globals){
+    VariableResolverFactory factory = createFactory();
+    updateFactory(knowledgeHelper, prevDecl, rule, rightHandle, rightHandle != null ? rightHandle.getObject() : null, tuple, otherVars, valueResolver, globals, factory);
+    return factory;
+}",java:S107,1.0
+"public static Query4Def<T1, T2, T3, T4> query(String name, Class<T1> type1, String arg1name, Class<T2> type2, String arg2name, Class<T3> type3, String arg3name, Class<T4> type4, String arg4name){
+    return new Query4DefImpl<>(VIEW_BUILDER, name, type1, arg1name, type2, arg2name, type3, arg3name, type4, arg4name);
+}",java:S107,1.0
+"public static ExprViewItem<A> expr(String exprId, Variable<A> var1, Variable<B> var2, Variable<C> var3, Variable<D> var4, Variable<E> var5, Variable<F> var6, Variable<G> var7, Variable<H> var8, Variable<I> var9, Variable<J> var10, Predicate10<A, B, C, D, E, F, G, H, I, J> predicate){
+    return new Expr10ViewItemImpl<>(exprId, var1, var2, var3, var4, var5, var6, var7, var8, var9, var10, new Predicate10.Impl<>(predicate));
+}",java:S107,1.0
+"private boolean evalBetaNode(PathMemory pmem, NetworkNode node, Memory nodeMem, SegmentMemory[] smems, int smemIndex, TupleSets<LeftTuple> trgTuples, ActivationsManager activationsManager, LinkedList<StackEntry> stack, boolean processRian, RuleExecutor executor, TupleSets<LeftTuple> srcTuples, TupleSets<LeftTuple> stagedLeftTuples, LeftTupleSinkNode sink){
+    BetaNode betaNode = (BetaNode) node;
+    BetaMemory bm;
+    AccumulateMemory am = null;
+    if (NodeTypeEnums.AccumulateNode == node.getType()) {
+        am = (AccumulateMemory) nodeMem;
+        bm = am.getBetaMemory();
+    } else {
+        bm = (BetaMemory) nodeMem;
+    }
+    if (processRian && betaNode.isRightInputIsRiaNode()) {
+        doRiaNode(activationsManager, pmem, srcTuples, betaNode, sink, smems, smemIndex, nodeMem, bm, stack, executor);
+        return true;
+    }
+    switchOnDoBetaNode(node, trgTuples, activationsManager.getReteEvaluator(), srcTuples, stagedLeftTuples, sink, bm, am);
+    return false;
+}",java:S107,1.0
+"public static Query9Def<T1, T2, T3, T4, T5, T6, T7, T8, T9> query(String name, Class<T1> type1, Class<T2> type2, Class<T3> type3, Class<T4> type4, Class<T5> type5, Class<T6> type6, Class<T7> type7, Class<T8> type8, Class<T9> type9){
+    return new Query9DefImpl<>(VIEW_BUILDER, name, type1, type2, type3, type4, type5, type6, type7, type8, type9);
+}",java:S107,1.0
+"public static Query3Def<T1, T2, T3> query(String pkg, String name, Class<T1> type1, String arg1name, Class<T2> type2, String arg2name, Class<T3> type3, String arg3name){
+    return new Query3DefImpl<>(VIEW_BUILDER, pkg, name, type1, arg1name, type2, arg2name, type3, arg3name);
+}",java:S107,1.0
+"public static void displayChildForums(JspWriter out, MultiSilverpeasBundle resources, boolean admin, boolean moderator, boolean reader, int currentForumId, String call, ForumsSessionController fsc, boolean isSubscriberByInheritance){
+    int[] forumIds = fsc.getForumSonsIds(currentForumId);
+    for (int forumId : forumIds) {
+        boolean isForumSubscriberByInheritance = isSubscriberByInheritance;
+        if (!isForumSubscriberByInheritance) {
+            isForumSubscriberByInheritance = fsc.isForumSubscriberByInheritance(forumId);
+        }
+        Forum forum = fsc.getForum(forumId);
+        displayForumLine(forum, resources, out, forum.getParentId(), call, admin, moderator, reader, 0, fsc, isForumSubscriberByInheritance);
+    }
+}",java:S107,1.0
+"private boolean processBeliefSet(RuleImpl rule, InternalMatch internalMatch, Object payload, PropagationContext pctx, JTMSBeliefSet<M> jtmsBeliefSet, boolean wasDecided, boolean wasNegated, InternalFactHandle fh){
+    if (!wasDecided && jtmsBeliefSet.isDecided()) {
+        ep.insert(jtmsBeliefSet.getFactHandle(), payload, rule, internalMatch != null ? internalMatch.getTuple().getTupleSink() : null, getObjectTypeConf(jtmsBeliefSet));
+        return true;
+    } else if (wasDecided && !jtmsBeliefSet.isDecided()) {
+        if (STRICT) {
+            throw new IllegalStateException(""FATAL : A fact and its negation have been asserted "" + jtmsBeliefSet.getFactHandle().getObject());
+        }
+        ep.delete(fh, fh.getObject(), getObjectTypeConf(jtmsBeliefSet), pctx.getRuleOrigin(), internalMatch != null ? internalMatch.getTuple().getTupleSink() : null);
+        return true;
+    } else if (wasNegated != jtmsBeliefSet.isNegated()) {
+        final PropagationContext updatePctx = ep.getPctxFactory().createPropagationContext(ep.getReteEvaluator().getNextPropagationIdCounter(), PropagationContext.Type.MODIFICATION, pctx.getRuleOrigin(), pctx.getTerminalNodeOrigin(), fh, ep.getEntryPoint());
+        ep.update(fh, fh.getObject(), fh.getObject(), getObjectTypeConf(jtmsBeliefSet), updatePctx);
+    }
+    return false;
+}",java:S107,1.0
+"public static ExprViewItem<T> groupBy(ViewItem<T> viewItem, Variable<A> var1, Variable<B> var2, Variable<C> var3, Variable<D> var4, Variable<K> varKey, Function4<A, B, C, D, K> groupingFunction, AccumulateFunction... accFunctions){
+    return new GroupByExprViewItem<>(viewItem, new Variable[] { var1, var2, var3, var4 }, varKey, toFunctionN(groupingFunction), accFunctions);
+}",java:S107,1.0
+"public void send(MessageProducer producer, Message message) throws Exception{
+    if (preserveMessageQos) {
+        long ttl = message.getJMSExpiration();
+        if (ttl != 0) {
+            ttl = ttl - System.currentTimeMillis();
+            if (ttl <= 0) {
+                ttl = 1;
+            }
+        }
+        int priority = message.getJMSPriority();
+        if (priority < 0 || priority > 9) {
+            priority = this.priority;
+        }
+        int resolvedDeliveryMode = resolveDeliveryMode(message);
+        producer.send(message, resolvedDeliveryMode, priority, ttl);
+    } else if (explicitQosEnabled) {
+        producer.send(message, deliveryMode, priority, timeToLive);
+    } else {
+        producer.send(message);
+    }
+}",java:S112,4.0
+"public final PGConnection initJdbc() throws Exception{
+    PGConnection conn;
+    if (this.getDatasource() != null) {
+        conn = PgEventHelper.toPGConnection(this.getDatasource().getConnection());
+    } else {
+        ClassResolver classResolver = getCamelContext().getClassResolver();
+        classResolver.resolveMandatoryClass(PGDriver.class.getName(), PgEventComponent.class.getClassLoader());
+        conn = (PGConnection) DriverManager.getConnection(""jdbc:pgsql://"" + this.getHost() + "":"" + this.getPort() + ""/"" + this.getDatabase(), this.getUser(), this.getPass());
+    }
+    return conn;
+}",java:S112,4.0
+"private String doMessage(String msg) throws Exception{
+    String resp = """";
+    try (Socket echoSocket = new Socket(this.host, this.port)) {
+        try (PrintWriter out = new PrintWriter(echoSocket.getOutputStream(), true)) {
+            try (BufferedReader in = new BufferedReader(new InputStreamReader(echoSocket.getInputStream()))) {
+                out.println(msg);
+                resp = in.readLine();
+            }
+        }
+    } catch (IOException e) {
+        throw new Exception(""Unable to send message to ChatScript Server. Reason:"" + e.getMessage(), e);
+    }
+    return resp;
+}",java:S112,4.0
+"protected void setupSocketProtocol(MinaConfiguration configuration) throws Exception{
+    LOG.debug(""createSocketEndpoint"");
+    boolean minaLogger = configuration.isMinaLogger();
+    List<IoFilter> filters = configuration.getFilters();
+    address = new InetSocketAddress(configuration.getHost(), configuration.getPort());
+    final int processorCount = Runtime.getRuntime().availableProcessors() + 1;
+    acceptor = new NioSocketAcceptor(processorCount);
+    configureCodecFactory(""MinaConsumer"", acceptor, configuration);
+    ((NioSocketAcceptor) acceptor).setReuseAddress(true);
+    setupNioSocketAcceptor(configuration, minaLogger, filters);
+    if (configuration.getSslContextParameters() != null) {
+        SslFilter filter = new SslFilter(configuration.getSslContextParameters().createSSLContext(getEndpoint().getCamelContext()));
+        acceptor.getFilterChain().addFirst(""sslFilter"", filter);
+    }
+}",java:S112,4.0
+"protected void doPreSetup() throws Exception{
+}",java:S112,4.0
+"protected Node getMessageBodyNode(Message message) throws Exception{
+    InputStream is = message.getMandatoryBody(InputStream.class);
+    Boolean isPlainText = isPlainText(message);
+    Node node;
+    if (isPlainText != null && isPlainText) {
+        node = getTextNode(message, is);
+    } else {
+        ValidatorErrorHandler errorHandler = new DefaultValidationErrorHandler();
+        Schema schema = getSchemaForSigner(message, errorHandler);
+        Document doc = parseInput(is, getConfiguration().getDisallowDoctypeDecl(), schema, errorHandler);
+        errorHandler.handleErrors(message.getExchange(), schema, null);
+        node = doc.getDocumentElement();
+        LOG.debug(""Root element of document to be signed: {}"", node);
+    }
+    return node;
+}",java:S112,4.0
+"private KnativeConfiguration getKnativeConfiguration() throws Exception{
+    final String envConfig = System.getenv(KnativeConstants.CONFIGURATION_ENV_VARIABLE);
+    final KnativeConfiguration conf = configuration.copy();
+    if (conf.getTransportOptions() == null) {
+        conf.setTransportOptions(new HashMap<>());
+    }
+    if (conf.getFilters() == null) {
+        conf.setFilters(new HashMap<>());
+    }
+    if (conf.getCeOverride() == null) {
+        conf.setCeOverride(new HashMap<>());
+    }
+    if (conf.getEnvironment() == null) {
+        KnativeEnvironment env;
+        if (environmentPath != null) {
+            env = KnativeEnvironment.mandatoryLoadFromResource(getCamelContext(), this.environmentPath);
+        } else if (envConfig != null) {
+            env = envConfig.startsWith(""file:"") || envConfig.startsWith(""classpath:"") ? KnativeEnvironment.mandatoryLoadFromResource(getCamelContext(), envConfig) : KnativeEnvironment.mandatoryLoadFromSerializedString(envConfig);
+        } else {
+            env = CamelContextHelper.findSingleByType(getCamelContext(), KnativeEnvironment.class);
+        }
+        if (env == null) {
+            throw new IllegalStateException(""Cannot load Knative configuration from file or env variable"");
+        }
+        conf.setEnvironment(env);
+    }
+    return conf;
+}",java:S112,4.0
+"protected void addNotificationListener() throws Exception{
+    JMXEndpoint ep = getEndpoint();
+    NotificationFilter nf = ep.getNotificationFilter();
+    if (nf == null && ep.getObservedAttribute() != null) {
+        LOG.debug(""Observing attribute: {}"", ep.getObservedAttribute());
+        boolean match = !ep.isNotifyDiffer();
+        nf = new JMXConsumerNotificationFilter(ep.getObservedAttribute(), ep.getStringToCompare(), match);
+    }
+    ObjectName objectName = ep.getJMXObjectName();
+    getServerConnection().addNotificationListener(objectName, this, nf, ep.getHandback());
+}",java:S112,4.0
+"protected ServerConnector getSslSocketConnector(Server server) throws Exception{
+    ServerConnector sslSocketConnector = null;
+    SSLContextParameters sslParams = this.sslContextParameters;
+    if (sslParams == null) {
+        sslParams = retrieveGlobalSslContextParameters();
+    }
+    SslContextFactory.Server sslContextFactory = new SslContextFactory.Server();
+    sslContextFactory.setEndpointIdentificationAlgorithm(null);
+    if (sslParams != null) {
+        sslContextFactory.setSslContext(sslParams.createSSLContext(getCamelContext()));
+    } else {
+        sslContextFactory.setKeyStorePassword(sslKeyPassword);
+        sslContextFactory.setKeyManagerPassword(sslPassword);
+        if (sslKeystore != null) {
+            sslContextFactory.setKeyStorePath(sslKeystore);
+        }
+    }
+    sslSocketConnector = new ServerConnector(server, sslContextFactory);
+    return sslSocketConnector;
+}",java:S112,4.0
+"private Status updateStatus(StatusUpdate status) throws Exception{
+    Status response = endpoint.getProperties().getTwitter().v1().tweets().updateStatus(status);
+    LOG.debug(""Updated status: {}"", status);
+    LOG.debug(""Status id: {}"", response.getId());
+    return response;
+}",java:S112,4.0
+"protected static final void setOnBreakReturn(int value){
+    onBreakReturn = value;
+}",java:S1124,6.0
+"public static final int doCompare(InternalMatch existing, InternalMatch adding){
+    if (existing == adding) {
+        return 0;
+    }
+    final int s1 = existing.getSalience();
+    final int s2 = adding.getSalience();
+    if (s1 != s2) {
+        return s1 > s2 ? 1 : -1;
+    }
+    Rule r1 = existing.getRule();
+    Rule r2 = adding.getRule();
+    if (r1.getLoadOrder() == r2.getLoadOrder()) {
+        return existing.getActivationNumber() > adding.getActivationNumber() ? 1 : -1;
+    }
+    return r2.getLoadOrder() - r1.getLoadOrder();
+}",java:S1124,6.0
+"protected static final void registerBreakpoint(String sourceName, int lineNumber){
+    if (verbose) {
+        logger.info(""Registering breakpoint for "" + sourceName + "":"" + lineNumber);
+    }
+    MVELRuntime.registerBreakpoint(sourceName, lineNumber);
+}",java:S1124,6.0
+"private static synchronized ActualMountService applyWorkaroundForProblematicFuse(MountService targetedService, boolean isDesired, AtomicReference<MountService> firstUsedProblematicFuseMountService){
+    var targetIsProblematicFuse = isProblematicFuseService(targetedService);
+    if (targetIsProblematicFuse && firstUsedProblematicFuseMountService.get() == null) {
+        firstUsedProblematicFuseMountService.set(targetedService);
+    }
+    if (targetIsProblematicFuse && !firstUsedProblematicFuseMountService.get().equals(targetedService)) {
+        return new ActualMountService(formerSelectedMountService.get(), false);
+    } else {
+        formerSelectedMountService.set(targetedService);
+        return new ActualMountService(targetedService, isDesired);
+    }
+}",java:S1124,6.0
+"protected static final void removeBreakpoint(String sourceName, int lineNumber){
+    if (verbose) {
+        logger.info(""Removing breakpoint from "" + sourceName + "":"" + lineNumber);
+    }
+    MVELRuntime.removeBreakpoint(sourceName, lineNumber);
+}",java:S1124,6.0
+"public static final int doCompare(final RuleAgendaItem existing, final RuleAgendaItem adding){
+    if (existing == adding) {
+        return 0;
+    }
+    final int s1 = existing.getSalience();
+    final int s2 = adding.getSalience();
+    if (s1 != s2) {
+        return s1 > s2 ? 1 : -1;
+    }
+    Rule r1 = existing.getRule();
+    Rule r2 = adding.getRule();
+    if (r1.getLoadOrder() == r2.getLoadOrder()) {
+        return adding.getTerminalNode().getId() - existing.getTerminalNode().getId();
+    }
+    return r2.getLoadOrder() - r1.getLoadOrder();
+}",java:S1124,6.0
+"public static final String formatInPercent(double rate){
+    NumberFormat percent = NumberFormat.getPercentInstance();
+    percent.setMaximumFractionDigits(PERCENT_FORMAT_DIGITS_PRECISION);
+    return percent.format(rate);
+}",java:S1124,6.0
+"private static final int onBreak(Frame frame){
+    if (verbose) {
+        logger.info(""Continuing with "" + (onBreakReturn == Debugger.CONTINUE ? ""continue"" : ""step-over""));
+    }
+    return onBreakReturn;
+}",java:S1124,6.0
+"public ClassLoader getClassLoader(){
+    throw new UnsupportedOperationException();
+}",java:S1124,6.0
+"protected static final void clearAllBreakpoints(){
+    if (verbose) {
+        logger.info(""Clearing all breakpoints"");
+    }
+    MVELRuntime.clearAllBreakpoints();
+}",java:S1124,6.0
+"@Override
+@Nullable
+public WALPointer addRecord(WALRecord rec) throws StorageException, IgniteCheckedException{
+    assert rec.size() > 0 : rec;
+    for (; ; ) {
+        checkNode();
+        SegmentedRingByteBuffer.WriteSegment seg;
+        try {
+            if (rec.type() == SWITCH_SEGMENT_RECORD && !resume)
+                seg = buf.offerSafe(rec.size());
+            else
+                seg = buf.offer(rec.size());
+        } catch (IgniteException e) {
+            throw new IgniteCheckedException(e);
+        }
+        WALPointer ptr = null;
+        if (seg != null) {
+            try {
+                int pos = (int) (seg.position() - rec.size());
+                ByteBuffer buf = seg.buffer();
+                if (buf == null)
+                    return null;
+                ptr = new WALPointer(getSegmentId(), pos, rec.size());
+                rec.position(ptr);
+                fillBuffer(buf, rec);
+                if (mmap) {
+                    while (true) {
+                        long written0 = written;
+                        if (seg.position() > written0) {
+                            if (WRITTEN_UPD.compareAndSet(this, written0, seg.position()))
+                                break;
+                        } else
+                            break;
+                    }
+                }
+                return ptr;
+            } finally {
+                seg.release();
+                if (mode == WALMode.BACKGROUND && rec instanceof CheckpointRecord)
+                    flushOrWait(ptr);
+            }
+        } else
+            walWriter.flushAll();
+    }
+}",java:S1130,7.0
+" static String encodeTokenValue(String value) throws URISyntaxException{
+    return URISupport.createQueryString(Collections.singletonMap(""x"", value)).substring(2).replace(""+"", ""%2B"").replace(""%3A"", "":"");
+}",java:S1130,7.0
+"private Collection<Cache.Entry<Integer, Object>> executeQuery(double minSalary, double maxSalary) throws Exception{
+    SqlQuery qry = new SqlQuery(Person.class, ""salary >= ? and salary <= ?"");
+    qry.setArgs(minSalary, maxSalary);
+    return cache.query(qry).getAll();
+}",java:S1130,7.0
+"public void processEvent(Object record, String replayId) throws IOException{
+    final Exchange exchange = createExchange(true);
+    final Message in = exchange.getIn();
+    in.setBody(record);
+    in.setHeader(HEADER_SALESFORCE_PUBSUB_REPLAY_ID, replayId);
+    AsyncCallback cb = defaultConsumerCallback(exchange, true);
+    getAsyncProcessor().process(exchange, cb);
+}",java:S1130,7.0
+"private void doInvoke(final IgniteCache<Object, Object> cache) throws Exception{
+    final int i = nextRandom(args.range());
+    if (nextBoolean())
+        cache.invoke(createRandomKey(i, cache.getName()), replaceEntryProc, createRandomValue(i + 1, cache.getName()));
+    else
+        cache.invoke(createRandomKey(i, cache.getName()), rmvEntryProc);
+}",java:S1130,7.0
+"@Override
+public WALRecord read(WALPointer ptr) throws IgniteCheckedException, StorageException{
+    try (WALIterator it = replay(ptr)) {
+        IgniteBiTuple<WALPointer, WALRecord> rec = it.next();
+        if (rec != null && rec.get2().position().equals(ptr))
+            return rec.get2();
+        else
+            throw new StorageException(""Failed to read record by pointer [ptr="" + ptr + "", rec="" + rec + ""]"");
+    }
+}",java:S1130,7.0
+"protected RoutesBuilder createRouteBuilder() throws Exception{
+    return new RouteBuilder() {
+
+        @Override
+        public void configure() {
+        }
+    };
+}",java:S1130,7.0
+"private String readLine() throws IOException{
+    String line = null;
+    int newLineMatchByteCount;
+    boolean isLastFilePart = no == 1;
+    int i = currentLastBytePos;
+    while (i > -1) {
+        if (!isLastFilePart && i < avoidNewlineSplitBufferSize) {
+            createLeftOver();
+            break;
+        }
+        if ((newLineMatchByteCount = getNewLineMatchByteCount(data, i)) > 0) {
+            final int lineStart = i + 1;
+            int lineLengthBytes = currentLastBytePos - lineStart + 1;
+            if (lineLengthBytes < 0) {
+                throw new IllegalStateException(""Unexpected negative line length="" + lineLengthBytes);
+            }
+            byte[] lineData = new byte[lineLengthBytes];
+            System.arraycopy(data, lineStart, lineData, 0, lineLengthBytes);
+            line = new String(lineData, encoding);
+            currentLastBytePos = i - newLineMatchByteCount;
+            break;
+        }
+        i -= byteDecrement;
+        if (i < 0) {
+            createLeftOver();
+            break;
+        }
+    }
+    if (isLastFilePart && leftOver != null) {
+        line = new String(leftOver, encoding);
+        leftOver = null;
+    }
+    return line;
+}",java:S1130,7.0
+"private Collection<List<?>> executeQueryJoin(double minSalary, double maxSalary) throws Exception{
+    IgniteCache<Integer, Object> cache = cacheForOperation(true);
+    SqlFieldsQuery qry = new SqlFieldsQuery(""select p.id, p.orgId, p.firstName, p.lastName, p.salary, o.name "" + ""from Person p "" + ""left join Organization o "" + ""on p.id = o.id "" + ""where salary >= ? and salary <= ?"");
+    qry.setArgs(minSalary, maxSalary);
+    return cache.query(qry).getAll();
+}",java:S1130,7.0
+"public static BodyPublisher ofStreamPart(Map<Object, Object> data, String boundary) throws IOException{
+    Supplier<? extends InputStream> streamSupplier = new FileUploadStreamSupplier(data, boundary).generate();
+    return BodyPublishers.ofInputStream(streamSupplier);
+}",java:S1130,7.0
+"private static ChartPersonnVO buildFakePersonUnit(){
+    ChartPersonnVO chart = new ChartPersonnVO();
+    OrganizationBox rootOrganization = new OrganizationBox();
+    List<UserVO> mainActors = new ArrayList<>();
+    mainActors.add(new UserVO(""Laurent Morel"", ""l.morel"", ""Directeur""));
+    mainActors.add(new UserVO(""Dupond Jean"", ""j.dupond"", ""Directeur associÃ©""));
+    rootOrganization.setName(""DGS"");
+    rootOrganization.setDn(""OU=DGS,OU=Issy,dc=mondomain,dc=com"");
+    rootOrganization.setMainActors(mainActors);
+    rootOrganization.setParentDn(""OU=Issy,dc=mondomain,dc=com"");
+    chart.setRootOrganization(rootOrganization);
+    CategoryBox category1 = new CategoryBox();
+    category1.setName(""SecrÃ©taire"");
+    List<UserVO> letusers = new ArrayList<>();
+    letusers.add(new UserVO(""Murielle Dus"", ""m.duc"", null));
+    letusers.add(new UserVO(""Camille Bet"", ""c.bet"", null));
+    category1.setUsers(letusers);
+    CategoryBox category2 = new CategoryBox();
+    category2.setName(""Adjoints"");
+    List<UserVO> rightusers = new ArrayList<>();
+    rightusers.add(new UserVO(""Jeanne Calment"", ""m.duc"", null));
+    rightusers.add(new UserVO(""Pierre Le Bon"", ""p.lebon"", null));
+    category2.setUsers(rightusers);
+    List<CategoryBox> categories = new ArrayList<>();
+    categories.add(category1);
+    categories.add(category2);
+    chart.setCategories(categories);
+    return chart;
+}",java:S1144,10.0
+"private static boolean contains(Object[] array, Object value){
+    for (int i = 0; i < array.length; i++) {
+        if (array[i] == null && value == null || array[i] != null && array[i].equals(value)) {
+            return true;
+        }
+    }
+    return false;
+}",java:S1144,10.0
+"private static Drive getClient(Exchange exchange){
+    GoogleDriveComponent component = exchange.getContext().getComponent(""google-drive"", GoogleDriveComponent.class);
+    return component.getClient(component.getConfiguration());
+}",java:S1144,10.0
+"private Type type(String typeName){
+    return classGenerator.toType(typeName);
+}",java:S1144,10.0
+"private static String createRules2(String dialect){
+    return """" + ""rule \""r1\""\n"" + ""dialect \"""" + dialect + ""\""\n"" + ""when   t : TransactionC(CurrencyCode == \""USD\"") \n"" + ""then \n"" + ""mo.add(new Outcome(\""r1\"" , t.getTransactionNumber()));\n"" + ""end \n"" + ""rule \""r2\""\n"" + ""dialect \"""" + dialect + ""\""\n"" + ""when   t : TransactionC(CurrencyCode == \""USD\"") \n"" + ""then \n"" + ""mo.add(new Outcome(\""r2\"" , t.getTransactionNumber()));\n"" + ""end \n"" + ""rule \""r3\""\n"" + ""dialect \"""" + dialect + ""\""\n"" + ""when   t : TransactionC(CurrencyCode == \""CAD\"") \n"" + ""then \n"" + ""mo.add(new Outcome(\""r3\"", t.getTransactionNumber()));\n"" + ""end \n"" + ""rule \""r4\""\n"" + ""dialect \"""" + dialect + ""\""\n"" + ""when   t : TransactionC(CurrencyCode == \""USD\"") \n"" + ""then \n"" + ""mo.add(new Outcome(\""r4\"", t.getTransactionNumber()));\n"" + ""end \n"";
+}",java:S1144,10.0
+"private static void stripBlockDescr(String originalCode, StringBuilder consequence, JavaBlockDescr block, int offset){
+    addWhiteSpaces(originalCode, consequence, consequence.length(), block.getEnd() - offset);
+}",java:S1144,10.0
+"private static void stripTryDescr(String originalCode, StringBuilder consequence, JavaTryBlockDescr block, int offset){
+    addWhiteSpaces(originalCode, consequence, consequence.length(), block.getTextStart() - offset);
+    addWhiteSpaces(originalCode, consequence, consequence.length(), block.getEnd() - offset);
+    for (JavaCatchBlockDescr catchBlock : block.getCatches()) {
+        addWhiteSpaces(originalCode, consequence, consequence.length(), catchBlock.getTextStart() - offset);
+        addWhiteSpaces(originalCode, consequence, consequence.length(), catchBlock.getEnd() - offset);
+    }
+    if (block.getFinal() != null) {
+        addWhiteSpaces(originalCode, consequence, consequence.length(), block.getFinal().getTextStart() - offset);
+        addWhiteSpaces(originalCode, consequence, consequence.length(), block.getFinal().getEnd() - offset);
+    }
+}",java:S1144,10.0
+"private static ChartPersonnVO buildFakePersonUnit(){
+    ChartPersonnVO chart = new ChartPersonnVO();
+    OrganizationBox rootOrganization = new OrganizationBox();
+    List<UserVO> mainActors = new ArrayList<>();
+    mainActors.add(new UserVO(""Laurent Morel"", ""l.morel"", ""Directeur""));
+    mainActors.add(new UserVO(""Dupond Jean"", ""j.dupond"", ""Directeur associÃ©""));
+    rootOrganization.setName(""DGS"");
+    rootOrganization.setDn(""OU=DGS,OU=Issy,dc=mondomain,dc=com"");
+    rootOrganization.setMainActors(mainActors);
+    rootOrganization.setParentDn(""OU=Issy,dc=mondomain,dc=com"");
+    chart.setRootOrganization(rootOrganization);
+    CategoryBox category1 = new CategoryBox();
+    category1.setName(""SecrÃ©taire"");
+    List<UserVO> letusers = new ArrayList<>();
+    letusers.add(new UserVO(""Murielle Dus"", ""m.duc"", null));
+    letusers.add(new UserVO(""Camille Bet"", ""c.bet"", null));
+    category1.setUsers(letusers);
+    CategoryBox category2 = new CategoryBox();
+    category2.setName(""Adjoints"");
+    List<UserVO> rightusers = new ArrayList<>();
+    rightusers.add(new UserVO(""Jeanne Calment"", ""m.duc"", null));
+    rightusers.add(new UserVO(""Pierre Le Bon"", ""p.lebon"", null));
+    category2.setUsers(rightusers);
+    List<CategoryBox> categories = new ArrayList<>();
+    categories.add(category1);
+    categories.add(category2);
+    chart.setCategories(categories);
+    return chart;
+}",java:S1144,10.0
+"private static void invalidRuleTableDef(final String ruleRow){
+    throw new IllegalArgumentException(""Invalid rule table header cell. Should be in the format of 'RuleTable YourRuleName'. "" + ""It was: \n ["" + ruleRow + ""] \n"");
+}",java:S1144,10.0
+"private static double[][] getPosition(String stringPosition, double[][] position){
+    if (stringPosition != null) {
+        stringPosition = clearStringPostion(stringPosition);
+        int i = 0;
+        int j = 0;
+        for (String pos : stringPosition.split("","")) {
+            position[i][j] = Double.parseDouble(pos);
+            if (i < j) {
+                i += 1;
+            }
+            j += 1;
+        }
+    }
+    return null;
+}",java:S1144,10.0
+"public void endElement(QName element, Augmentations augs) throws XNIException{
+    if (fElementDepth <= fRemovalElementDepth && elementAccepted(element.rawname)) {
+        super.endElement(element, augs);
+    }
+    fElementDepth--;
+    if (fElementDepth == fRemovalElementDepth) {
+        fRemovalElementDepth = Integer.MAX_VALUE;
+    }
+    XMLString string = new XMLString();
+    string.setValues(new char[] { ' ', ' ' }, 0, 1);
+    characters(string, augs);
+}",java:S1161,11.0
+"public void doAttach(BuildContext context){
+    super.doAttach(context);
+    this.leftInput.addTupleSink(this, context);
+}",java:S1161,11.0
+"public boolean equals(Object object){
+    if (!(object instanceof ClassPathResource)) {
+        return false;
+    }
+    ClassPathResource other = (ClassPathResource) object;
+    return this.path.equals(other.path) && this.clazz == other.clazz && this.classLoader == other.classLoader;
+}",java:S1161,11.0
+"public String toString(){
+    return ""<==[ActivationCancelled("" + getActivation().getActivationNumber() + ""): rule="" + getActivation().getRule().getName() + ""; tuple="" + getActivation().getTuple() + ""]"";
+}",java:S1161,11.0
+"public Builder clone(){
+    return create().mergeFrom(buildPartial());
+}",java:S1161,11.0
+"public FieldVisitor visitField(final int access, final String name, final String desc, final String signature, final Object value){
+    return null;
+}",java:S1161,11.0
+"public boolean isSelfReference(){
+    return false;
+}",java:S1161,11.0
+"public boolean isGlobal(){
+    return true;
+}",java:S1161,11.0
+"public void mousePressed(MouseEvent e){
+    gameView.getKsession().insert(new ShootCommand());
+    gameView.getKsession().fireAllRules();
+}",java:S1161,11.0
+"public boolean isSelfReference(){
+    return true;
+}",java:S1161,11.0
+" String classToTypeName(Class<? extends RelNode> class_){
+    if (IgniteRel.class.isAssignableFrom(class_))
+        return class_.getSimpleName();
+    String canonicalName = class_.getName();
+    for (String package_ : PACKAGES) {
+        if (canonicalName.startsWith(package_)) {
+            String remaining = canonicalName.substring(package_.length());
+            if (remaining.indexOf('.') < 0 && remaining.indexOf('$') < 0)
+                return remaining;
+        }
+    }
+    return canonicalName;
+}",java:S117,12.0
+"@Override
+public boolean getBoolean(String tag, boolean default_){
+    Boolean b = (Boolean) jsonRel.get(tag);
+    return b != null ? b : default_;
+}",java:S117,12.0
+"@Override
+public boolean getBoolean(String tag, boolean default_){
+    return input.getBoolean(tag, default_);
+}",java:S117,12.0
+"public void _setFieldTMS(TraitFieldTMS __$$field_Tms$$){
+    this.__$$field_Tms$$ = __$$field_Tms$$;
+}",java:S117,12.0
+"public static StatefulKnowledgeSessionImpl readSession(ProtobufMessages.KnowledgeSession _session, StatefulKnowledgeSessionImpl session, InternalAgenda agenda, ProtobufMarshallerReaderContext context) throws IOException, ClassNotFoundException{
+    GlobalResolver globalResolver = (GlobalResolver) context.env.get(EnvironmentName.GLOBALS);
+    if (globalResolver != null) {
+        session.setGlobalResolver(globalResolver);
+    }
+    if (session.getTimerService() instanceof PseudoClockScheduler) {
+        PseudoClockScheduler clock = (PseudoClockScheduler) session.getTimerService();
+        clock.advanceTime(_session.getTime(), TimeUnit.MILLISECONDS);
+    }
+    context.setWorkingMemory(session);
+    readNodeMemories(context, _session.getRuleData());
+    List<PropagationContext> pctxs = new ArrayList<>();
+    if (_session.getRuleData().hasInitialFact()) {
+        session.setInitialFactHandle(session.initInitialFact(context));
+        context.getHandles().put(session.getInitialFactHandle().getId(), session.getInitialFactHandle());
+    }
+    for (ProtobufMessages.EntryPoint _ep : _session.getRuleData().getEntryPointList()) {
+        EntryPoint wmep = context.getWorkingMemory().getEntryPoint(_ep.getEntryPointId());
+        readFactHandles(context, _ep, ((WorkingMemoryEntryPoint) wmep).getObjectStore(), pctxs);
+        context.getWorkingMemory().getFactHandleFactory().doRecycleIds(context.getHandles().keySet());
+        context.getFilter().fireRNEAs(context.getWorkingMemory());
+        readTruthMaintenanceSystem(session, context, wmep, _ep, pctxs);
+        context.getWorkingMemory().getFactHandleFactory().stopRecycleIds();
+    }
+    cleanReaderContexts(pctxs);
+    readActionQueue(context, _session.getRuleData());
+    if (processMarshaller != null) {
+        if (_session.hasProcessData()) {
+            context.setParameterObject(_session.getProcessData());
+            processMarshaller.readProcessInstances(context);
+            context.setParameterObject(_session.getProcessData());
+            processMarshaller.readWorkItems(context);
+            context.setParameterObject(_session.getProcessData());
+            processMarshaller.readProcessTimers(context);
+        }
+    } else {
+        if (_session.hasProcessData()) {
+            throw new IllegalStateException(""No process marshaller, unable to unmarshall process data."");
+        }
+    }
+    if (_session.hasTimers()) {
+        for (ProtobufMessages.Timers.Timer _timer : _session.getTimers().getTimerList()) {
+            readTimer(context, _timer);
+        }
+    }
+    if (!context.timerNodeSchedulers.isEmpty()) {
+        for (Map<TupleKey, Scheduler> schedulers : context.timerNodeSchedulers.values()) {
+            for (Scheduler scheduler : schedulers.values()) {
+                scheduler.schedule(scheduler.getTrigger());
+            }
+        }
+        context.timerNodeSchedulers.clear();
+    }
+    agenda.setActivationsFilter(null);
+    return session;
+}",java:S117,12.0
+"private void writeCompilationDataToTrg(KieModuleCache.KModuleCache _kmoduleCache, String kieBaseName, ResourceStore trgMfs){
+    try {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        KieModuleCacheHelper.writeToStreamWithHeader(out, _kmoduleCache);
+        String compilatonDataPath = ""META-INF/"" + kieBaseName.replace('.', '/') + ""/kbase.cache"";
+        trgMfs.write(compilatonDataPath, out.toByteArray(), true);
+    } catch (IOException e) {
+    }
+}",java:S117,12.0
+"private static void loadStrategiesIndex(MarshallerReaderContext context, ProtobufMessages.Header _header) throws IOException, ClassNotFoundException{
+    for (ProtobufMessages.Header.StrategyIndex _entry : _header.getStrategyList()) {
+        ObjectMarshallingStrategy strategyObject = context.getResolverStrategyFactory().getStrategyObject(_entry.getName());
+        if (strategyObject == null) {
+            throw new IllegalStateException(""No strategy of type "" + _entry.getName() + "" available."");
+        }
+        context.getUsedStrategies().put(_entry.getId(), strategyObject);
+        Context ctx = strategyObject.createContext();
+        context.getStrategyContexts().put(strategyObject, ctx);
+        if (_entry.hasData() && ctx != null) {
+            ClassLoader classLoader = null;
+            if (context.getClassLoader() != null) {
+                classLoader = context.getClassLoader();
+            } else if (context.getKnowledgeBase() != null) {
+                classLoader = context.getKnowledgeBase().getRootClassLoader();
+            }
+            if (classLoader instanceof ProjectClassLoader) {
+                readRuntimeDefinedClasses(_header, (ProjectClassLoader) classLoader);
+            }
+            ctx.read(new DroolsObjectInputStream(_entry.getData().newInput(), classLoader));
+        }
+    }
+}",java:S117,12.0
+"private void addToCompilationData(KieModuleCache.CompilationData.Builder _cdata, JavaDialectRuntimeData runtimeData, List<String> types){
+    for (Map.Entry<String, byte[]> entry : runtimeData.getStore().entrySet()) {
+        if (!types.contains(entry.getKey())) {
+            KieModuleCache.CompDataEntry _entry = KieModuleCache.CompDataEntry.newBuilder().setId(entry.getKey()).setData(ByteString.copyFrom(entry.getValue())).build();
+            _cdata.addEntry(_entry);
+        }
+    }
+}",java:S117,12.0
+"public static String gensalt(int log_rounds, SecureRandom random){
+    StringBuffer rs = new StringBuffer();
+    byte[] rnd = new byte[BCRYPT_SALT_LEN];
+    random.nextBytes(rnd);
+    rs.append(""$2a$"");
+    if (log_rounds < 10)
+        rs.append(""0"");
+    if (log_rounds > 30) {
+        throw new IllegalArgumentException(""log_rounds exceeds maximum (30)"");
+    }
+    rs.append(Integer.toString(log_rounds));
+    rs.append(""$"");
+    rs.append(encode_base64(rnd, rnd.length));
+    return rs.toString();
+}",java:S117,12.0
+"public static void readRuntimeDefinedClasses(Header _header, ProjectClassLoader pcl) throws IOException, ClassNotFoundException{
+    if (_header.getRuntimeClassDefinitionsCount() > 0) {
+        for (ProtobufMessages.RuntimeClassDef def : _header.getRuntimeClassDefinitionsList()) {
+            String resourceName = def.getClassFqName();
+            byte[] byteCode = def.getClassDef().toByteArray();
+            if (!pcl.getStore().containsKey(resourceName)) {
+                pcl.getStore().put(resourceName, byteCode);
+            }
+        }
+    }
+}",java:S117,12.0
+"public boolean mismatchIsMissingToken(TokenStream input, int[] follow){
+    if (follow == null) {
+        return false;
+    }
+    return false;
+}",java:S1172,13.0
+"protected boolean isMatchedHiddenFile(GenericFile<T> file, boolean isDirectory){
+    String name = file.getFileNameOnly();
+    if (name.startsWith(""."")) {
+        return false;
+    }
+    return true;
+}",java:S1172,13.0
+"protected LeftTupleSinkPropagator addTupleSink(final LeftTupleSinkPropagator sinkPropagator, final LeftTupleSink tupleSink, final BuildContext context){
+    if (sinkPropagator instanceof EmptyLeftTupleSinkAdapter) {
+        return new SingleLeftTupleSinkAdapter(this.getPartitionId(), tupleSink);
+    }
+    if (sinkPropagator instanceof SingleLeftTupleSinkAdapter) {
+        CompositeLeftTupleSinkAdapter sinkAdapter = new CompositeLeftTupleSinkAdapter(this.getPartitionId());
+        sinkAdapter.addTupleSink(sinkPropagator.getSinks()[0]);
+        sinkAdapter.addTupleSink(tupleSink);
+        return sinkAdapter;
+    }
+    ((CompositeLeftTupleSinkAdapter) sinkPropagator).addTupleSink(tupleSink);
+    return sinkPropagator;
+}",java:S1172,13.0
+"public void resume(Tuple tuple){
+    it = treeMemory.tree.object2ObjectEntrySet().iterator();
+}",java:S1172,13.0
+"private static boolean processQueryNode(QueryElementNode queryNode, ReteEvaluator reteEvaluator, LeftTupleSource segmentRoot, SegmentMemory smem, List<Memory> memories, long nodePosMask){
+    SegmentMemory querySmem = getQuerySegmentMemory(reteEvaluator, queryNode);
+    QueryElementNode.QueryElementNodeMemory queryNodeMem = smem.createNodeMemory(queryNode, reteEvaluator);
+    queryNodeMem.setNodePosMaskBit(nodePosMask);
+    queryNodeMem.setQuerySegmentMemory(querySmem);
+    queryNodeMem.setSegmentMemory(smem);
+    memories.add(queryNodeMem);
+    return !queryNode.getQueryElement().isAbductive();
+}",java:S1172,13.0
+"public boolean mismatchIsMissingToken(TokenStream input, int[] follow){
+    if (follow == null) {
+        return false;
+    }
+    return false;
+}",java:S1172,13.0
+"protected Element getParentForEnvelopedCase(Document doc, Message inMessage) throws Exception{
+    if (getConfiguration().getParentXpath() != null) {
+        XPathFilterParameterSpec xp = getConfiguration().getParentXpath();
+        XPathExpression exp;
+        try {
+            exp = XmlSignatureHelper.getXPathExpression(xp);
+        } catch (XPathExpressionException e) {
+            throw new XmlSignatureException(""The parent XPath "" + getConfiguration().getParentXpath().getXPath() + "" is wrongly configured: The XPath "" + xp.getXPath() + "" is invalid."", e);
+        }
+        NodeList list = (NodeList) exp.evaluate(doc.getDocumentElement(), XPathConstants.NODESET);
+        if (list == null || list.getLength() == 0) {
+            throw new XmlSignatureException(""The parent XPath "" + xp.getXPath() + "" returned no result. Check the configuration of the XML signer component."");
+        }
+        int length = list.getLength();
+        for (int i = 0; i < length; i++) {
+            Node node = list.item(i);
+            if (node.getNodeType() == Node.ELEMENT_NODE) {
+                return (Element) node;
+            }
+        }
+        throw new XmlSignatureException(""The parent XPath "" + xp.getXPath() + "" returned no element. Check the configuration of the XML signer component."");
+    } else {
+        NodeList parents = doc.getElementsByTagNameNS(getConfiguration().getParentNamespace(), getConfiguration().getParentLocalName());
+        if (parents == null || parents.getLength() == 0) {
+            throw new XmlSignatureFormatException(String.format(""Incoming message has wrong format: The parent element with the local name %s and the namespace %s was not found in the message to build an enveloped XML signature."", getConfiguration().getParentLocalName(), getConfiguration().getParentNamespace()));
+        }
+        return (Element) parents.item(0);
+    }
+}",java:S1172,13.0
+"public boolean registerResourceToBuild(String kBaseName, String resource){
+    return true;
+}",java:S1172,13.0
+" ContentProvider serialize(final Object body, final Class<?>... additionalTypes) throws SalesforceException{
+    return new InputStreamContentProvider(toJson(body));
+}",java:S1172,13.0
+"private void startResize(MouseEvent evt){
+    origX = window.getX();
+    origY = window.getY();
+    origW = window.getWidth();
+    origH = window.getHeight();
+}",java:S1172,13.0
+"public HashEntry clone(){
+    DoubleHashEntry doubleEntry = new DoubleHashEntry();
+    doubleEntry.hashCode = hashCode;
+    doubleEntry.obj1 = obj1;
+    doubleEntry.obj2 = obj2;
+    return doubleEntry;
+}",java:S1182,14.0
+"public GroupElement clone(){
+    return clone(true);
+}",java:S1182,14.0
+"public InstanceNotEqualsConstraint clone(){
+    return new InstanceNotEqualsConstraint(this.otherPattern);
+}",java:S1182,14.0
+"public Constraint clone(){
+    return new QueryNameConstraint(readAccessor, queryName);
+}",java:S1182,14.0
+"@Override
+public synchronized Object clone() throws CloneNotSupportedException{
+    return set.clone();
+}",java:S1182,14.0
+"public EvalCondition clone(){
+    final EvalCondition clone = new EvalCondition(this.expression.clone(), this.requiredDeclarations.clone());
+    if (this.cloned == Collections.EMPTY_LIST) {
+        this.cloned = new ArrayList<>(1);
+    }
+    this.cloned.add(clone);
+    return clone;
+}",java:S1182,14.0
+"public Builder clone(){
+    return create().mergeFrom(buildPartial());
+}",java:S1182,14.0
+"public Interval clone(){
+    return new Interval(this.lowerBound, this.upperBound);
+}",java:S1182,14.0
+"public KieFileSystem clone(){
+    try {
+        final ByteArrayOutputStream byteArray = writeToByteArray(this);
+        return readFromByteArray(byteArray);
+    } catch (IOException | ClassNotFoundException ioe) {
+        logger.warn(""Unable to clone KieFileSystemImpl"", ioe);
+        return null;
+    }
+}",java:S1182,14.0
+"@Override
+public BinaryObject clone() throws CloneNotSupportedException{
+    return new BinaryEnumArray(ctx, compTypeId, compClsName, arr.clone());
+}",java:S1182,14.0
