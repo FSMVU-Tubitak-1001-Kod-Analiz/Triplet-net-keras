@@ -1,4 +1,4 @@
-function,smellKey,smellId
+function,smellKey,smellId 
 "public short getDefaultValueAs_short(){
     try {
         return initExpr == null ? 0 : Short.parseShort(initExpr);
