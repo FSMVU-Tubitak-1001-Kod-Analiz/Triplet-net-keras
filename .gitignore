@@ -1,1 +1,8 @@
-Data/graphcodebert_hidden_state_2500_smells.npy
+Data/
+Test/
+snapshot/
+.ipynb_checkpoints/*
+.idea/
+triplet_net/*
+!triplet_net/triplet_net
+*.ipynb
