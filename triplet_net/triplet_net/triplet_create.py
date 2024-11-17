@@ -2,6 +2,7 @@
 import os
 from datetime import datetime
 from itertools import combinations
+from pathlib import Path
 
 from torch import optim
 import copy
@@ -76,7 +77,7 @@ def load_embeddings(embeds_path, train_label_path, test_label_path, test_embeds_
 def create_triplet(embeds_path, train_label_path, test_label_path, save_path, train_batch_size, epoch, test_embeds_path=None):
 
     device = torch.device("cuda")
-    save_annotation(save_path, "Starting triplet training for " + embeds_path)
+    save_annotation(Path(save_path).stem, "Starting triplet training for " + embeds_path)
 
     X_train, X_test, y_train, y_test = load_embeddings(embeds_path, train_label_path, test_label_path, test_embeds_path)
 
@@ -177,10 +178,12 @@ def create_triplet(embeds_path, train_label_path, test_label_path, save_path, tr
     history = []
 
     for i in range(epoch):
-        data_iter = tqdm(enumerate(triplet_loader),
-                                      desc="EP_%s:%d" % ("test", i),
-                                      total=len(triplet_loader),
-                                      bar_format="{l_bar}{r_bar}")
+        data_iter = tqdm(
+            enumerate(triplet_loader),
+            desc="EP_%s:%d" % ("test", i),
+            total=len(triplet_loader),
+            bar_format="{l_bar}{r_bar}",
+        )
         total_loss = 0
 
         for j, (a_, p_, n_) in data_iter:
@@ -224,29 +227,3 @@ def create_triplet(embeds_path, train_label_path, test_label_path, save_path, tr
 
     np.save(save_path, embeds)
     save_annotation(save_path, f"Training for {embeds_path} complete at the timestamp given in the filename.\n" + "\n".join(history))
-
-
-if __name__ == "__main__":
-    running_params = [
-        {
-            "embeds_path": "/home/user/PycharmProjects/Model_Scratch/data/7500_smells_codebert_pooler_output.npy",
-            "save_path": "Test/embeds_codebert_pooler_1500_1.npy"
-        },
-        {
-            "embeds_path": "/home/user/PycharmProjects/Model_Scratch/data/7500_smells_bert_nli_mean_token_pooler_output.npy",
-            "save_path": "Test/embeds_nli_pooler_1500_1.npy"
-        },
-        {
-            "embeds_path": "/home/user/PycharmProjects/Model_Scratch/data/7500_smells_graphcodebert_hidden_state.npy",
-            "save_path": "Test/embeds_graphcodebert_1500_1.npy"
-        },
-        {
-            "embeds_path": "/home/user/PycharmProjects/Model_Scratch/data/7500_smells_graphcodebert_pooler_output.npy",
-            "save_path": "Test/embeds_graphcodebert_pooler_1500_1.npy"
-        }
-    ]
-
-    for i in running_params:
-        create_triplet(**i, train_label_path="/home/user/PycharmProjects/Model_Scratch/data/raw/7500_smells_train.json",
-                       test_label_path="/home/user/PycharmProjects/Model_Scratch/data/raw/7500_smells_test.json",
-                       train_batch_size=1024, epoch=30)
