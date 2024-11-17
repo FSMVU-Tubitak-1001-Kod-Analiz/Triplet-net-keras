@@ -5,4 +5,5 @@ snapshot/
 .idea/
 triplet_net/*
 !triplet_net/triplet_net
+!triplet_net/setup.py
 *.ipynb
