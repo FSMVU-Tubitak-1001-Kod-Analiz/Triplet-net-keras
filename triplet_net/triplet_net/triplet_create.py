@@ -14,6 +14,9 @@ from code_utils.utils import save_annotation, get_now
 import torch
 import pandas as pd
 import json
+from io import StringIO
+import logging
+
 
 __all__ = [
     "create_triplet",
@@ -25,7 +28,7 @@ def _normalize(X):
     return X / np.linalg.norm(X, ord=2, axis=1)[:, None]
 
 
-def load_embeddings(embeds_path, train_label_path, test_label_path, test_embeds_path=None, normalize=True):
+def load_embeddings(embeds_path, train_label_path, test_label_path, test_embeds_path=None, normalize=False):
     train_labels = []
     with open(train_label_path, "r") as label:
         for line in label.readlines():
@@ -75,9 +78,13 @@ def load_embeddings(embeds_path, train_label_path, test_label_path, test_embeds_
 
 
 def create_triplet(embeds_path, train_label_path, test_label_path, save_path, train_batch_size, epoch, test_embeds_path=None):
+    log_stream = StringIO()
+    log_handler = logging.StreamHandler(log_stream)
+    logging.getLogger('triplet').addHandler(log_handler)
 
     device = torch.device("cuda")
-    save_annotation(Path(save_path).stem, "Starting triplet training for " + embeds_path)
+
+    logging.getLogger('triplet').info("Starting triplet training for " + embeds_path + " at " + get_now())
 
     X_train, X_test, y_train, y_test = load_embeddings(embeds_path, train_label_path, test_label_path, test_embeds_path)
 
@@ -226,4 +233,5 @@ def create_triplet(embeds_path, train_label_path, test_label_path, save_path, tr
     embeds = np.vstack(output_embeds)
 
     np.save(save_path, embeds)
-    save_annotation(save_path, f"Training for {embeds_path} complete at the timestamp given in the filename.\n" + "\n".join(history))
+    logging.getLogger('triplet').info(f"Training for {embeds_path} complete at the timestamp given in the filename.\n" + "\n".join(history))
+    save_annotation(save_path, logging.getLogger('triplet').handlers[-1].stream.getvalue())

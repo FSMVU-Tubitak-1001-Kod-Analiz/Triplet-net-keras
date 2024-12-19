@@ -52,7 +52,7 @@ class TSNECreator:
         save_path = "/home/eislamoglu/Pictures/tsne/tsne_" + now + "_" + subtitle + ".png"
         plt.savefig(save_path, dpi=500, bbox_inches=0)
 
-        return save_path, f
+        return save_path, (f, ax)
 
     @staticmethod
     def load_embeds(data_path, label_path):
@@ -88,11 +88,13 @@ class TSNECreator:
 
         tsne_embeds, label_codes, labels_unique = TSNECreator.tsne(data, label_df)
 
-        _, f = TSNECreator._scatter(tsne_embeds, label_codes, labels_unique, data_path.stem)
+        save_path, (f, ax) = TSNECreator._scatter(tsne_embeds, label_codes, labels_unique, data_path.stem)
         save_annotation("tsne_" + data_path.stem, "Created tsne. Class codes for values are like" + str(labels_unique))
 
         if display:
             f.show(True)
+
+        return save_path
 
     @staticmethod
     def create_from_pair(original_data_path, new_data_path, label_path, display=False):
@@ -109,13 +111,15 @@ class TSNECreator:
         eval_original_tsne_embeds, label_codes, labels_unique = TSNECreator.tsne(original_data, label_df)
         eval_new_tsne_embeds, _, _ = TSNECreator.tsne(new_data, label_df)
 
-        _, f_original = TSNECreator._scatter(eval_original_tsne_embeds, label_codes, labels_unique, original_data_path.stem)
-        _, f_new = TSNECreator._scatter(eval_new_tsne_embeds, label_codes, labels_unique, new_data_path.stem)
+        save_path_original, (f_original, ax_original) = TSNECreator._scatter(eval_original_tsne_embeds, label_codes, labels_unique, original_data_path.stem)
+        save_path_new, (f_new, ax_new) = TSNECreator._scatter(eval_new_tsne_embeds, label_codes, labels_unique, new_data_path.stem)
         if display:
             f_original.show(True)
             f_new.show(True)
 
         save_annotation("tsne_" + original_data_path.stem, "Created tsne. Class codes for values are like" + str(labels_unique))
+
+        return save_path_original, save_path_new
 
 
 if __name__ == '__main__':
